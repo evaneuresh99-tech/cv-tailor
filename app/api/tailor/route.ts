@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cvTemplates, getAllTemplateSummaries, getTemplateByTrack, type CVTrack } from '@/lib/cv-templates';
+import { getAllTemplateSummaries, getTemplateByTrack, type CVTrack } from '@/lib/cv-templates';
 import { selectBestTemplate, runGapAnalysis, tailorCV, scoreCV, generateCoverLetter } from '@/lib/ai-client';
 import { diffCVAgainstTemplate } from '@/lib/diff-checker';
 import { generateCVPdf, generateCoverLetterPdf } from '@/lib/pdf-generator';

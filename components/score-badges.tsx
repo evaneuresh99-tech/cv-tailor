@@ -1,6 +1,5 @@
 'use client'
 
-import { Badge } from '@/components/ui/badge'
 
 interface ScoreBadgesProps {
   cvMatchScore: number

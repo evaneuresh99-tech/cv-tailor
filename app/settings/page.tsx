@@ -273,12 +273,6 @@ function TemplateEditor({
   );
 }
 
-const TRACK_LABELS: Record<CVTrack, string> = {
-  'ops-lead': 'Operations Lead',
-  'product-owner': 'Product Owner',
-  'technical-pm': 'Technical PM',
-};
-
 export default function SettingsPage() {
   const [templates, setTemplates] = useState<CVTemplate[]>(cvTemplates);
   const [saved, setSaved] = useState(false);

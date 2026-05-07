@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cvTemplates, getTemplateByTrack, type CVTrack } from '@/lib/cv-templates';
+import { getTemplateByTrack, type CVTrack, getAllTemplateSummaries } from '@/lib/cv-templates';
 import { selectBestTemplate, runGapAnalysis, scoreCV } from '@/lib/ai-client';
-import { getAllTemplateSummaries } from '@/lib/cv-templates';
 import Anthropic from '@anthropic-ai/sdk';
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -52,7 +51,7 @@ Return JSON array of strings only.`;
   return result as Record<CVTrack, string[]>;
 }
 
-async function searchIndeedJobs(query: string, location: string, _count: number): Promise<JobResult[]> {
+async function searchIndeedJobs(query: string, location: string): Promise<JobResult[]> {
   // Indeed MCP not available in this environment — fallback to web search simulation
   return searchJobsWebFallback(query, location);
 }
@@ -107,11 +106,10 @@ function parseSalary(salaryStr?: string): number | null {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { markets, tracks, seniority, resultsPerTrack } = body as {
+    const { markets, tracks, seniority } = body as {
       markets: ('uk' | 'latvia' | 'both')[];
       tracks: CVTrack[];
       seniority: 'mid-level' | 'senior' | 'both';
-      resultsPerTrack: number;
     };
 
     const selectedTracks = tracks.length > 0 ? tracks : (['ops-lead', 'product-owner', 'technical-pm'] as CVTrack[]);
@@ -130,7 +128,7 @@ export async function POST(req: NextRequest) {
       for (const q of trackQueries.slice(0, 3)) {
         if (includeUK) {
           const seniorityPrefix = seniority === 'senior' ? 'Senior ' : seniority === 'mid-level' ? '' : '';
-          const results = await searchIndeedJobs(`${seniorityPrefix}${q}`, 'London, UK', 2);
+          const results = await searchIndeedJobs(`${seniorityPrefix}${q}`, 'London, UK');
           rawResults.push(...results.slice(0, 2));
         }
         if (includeLatvia) {
